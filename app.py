@@ -1,6 +1,6 @@
 import json
 import os
-from flask import Flask, redirect, url_for, session, render_template
+from flask import Flask, redirect, url_for, session, render_template, request, jsonify, Response
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime
 import pytz
@@ -21,15 +21,41 @@ google = oauth.register(
     authorize_params={'prompt': 'select_account'}
 )
 
+def generate_letter_diamond(n):
+    s = 'FORMULAQSOLUTIONS'
+    if n % 2 == 0:
+        n += 1
+    length = n // 2
+    idx = 0
+    ans = []
+
+    for i in range(0, length + 1):
+        spaces = length - i
+        string = ' ' * spaces
+        for j in range(0, 2 * i + 1):
+            string += s[(idx + j) % len(s)]
+        ans.append(string)
+        idx += 1
+
+    for i in range(length - 1, -1, -1):
+        spaces = length - i
+        string = ' ' * spaces
+        for j in range(0, 2 * i + 1):
+            string += s[(idx + j) % len(s)]
+        ans.append(string)
+        idx += 1
+
+    return "\n".join(ans)
+
+
 @app.route('/')
 def index():
     user = session.get('user')
-    ist = pytz.timezone('Asia/Kolkata')
-    indian_time = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
-    
     if user:
-        return render_template('dashboard.html', title="Dashboard", user=user, time=indian_time)
-    return render_template('login.html', title="Login")
+        ist = pytz.timezone('Asia/Kolkata')
+        indian_time = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
+        return render_template('dashboard.html', user=user, time=indian_time)
+    return render_template('login.html')
 
 @app.route('/login')
 def login():
@@ -52,6 +78,20 @@ def logout():
         post_logout_redirect_uri = url_for('index', _external=True)
         return redirect(f"{end_session_endpoint}?post_logout_redirect_uri={post_logout_redirect_uri}")
     return redirect('/')
+
+@app.route('/api/data')
+def api_data():
+    user = session.get('user')
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    n_lines = request.args.get('num_lines', default=21, type=int)
+    if n_lines < 1 or n_lines > 100:
+        return jsonify({"error": "num_lines must be between 1 and 100"}), 400
+
+    pattern = generate_letter_diamond(n_lines)
+    return Response(pattern, mimetype="text/plain")
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=1831)
