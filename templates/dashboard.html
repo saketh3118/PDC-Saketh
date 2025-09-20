@@ -1,11 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- User Info -->
+<div style="padding-bottom: 10px;">
     {% if user.picture %}
-        <img src="{{ user.picture }}" alt="Profile Pic" class="profile-pic">
+        <img src="{{ user.picture }}" alt="Profile Pic" class="profile-pic mb-2" style="width:100px;border-radius:50%;">
     {% endif %}
-    <h4 class="mb-2">Hello, {{ user.name }}</h4>
+    <h4>Hello, {{ user.name }}</h4>
     <p class="text-muted mb-1">{{ user.email }}</p>
     <p class="text-muted mb-3">Current Indian Time: <strong>{{ time }}</strong></p>
-    <a href="{{ url_for('logout') }}" class="btn btn-logout">Sign Out</a>
+</div>
+
+<hr>
+
+<!-- Pattern Input -->
+<h5 class="mb-3">Printing Design</h5>
+<div class="mb-3">
+    <label for="num_lines" class="form-label">Number of Lines (max 100):</label>
+    <input type="number" id="num_lines" class="form-control" max="100" value="21">
+</div>
+<button id="display-btn" class="btn btn-primary">Display</button>
+
+<hr>
+<h6 id="pattern-top" class="mt-3">Generated Pattern:</h6>
+
+<!-- Pattern container that grows based on content -->
+<div id="pattern-container" style="display: inline-block;">
+    <pre id="pattern-result" style="font-family: monospace; font-size: 14px; line-height: 1.2; white-space: pre;"></pre>
+</div>
+
+<!-- Logout -->
+<a href="{{ url_for('logout') }}" class="btn btn-danger mt-4">Sign Out</a>
+
+<script>
+document.getElementById('display-btn').addEventListener('click', async () => {
+    const n = document.getElementById('num_lines').value;
+    if (n < 1 || n > 100) {
+        alert("Please enter a number between 1 and 100.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/data?num_lines=${n}`);
+        const text = await response.text();
+
+        let processed = text
+            .split("\n")
+            .map(line => line.trimStart())
+            .join("\n");
+
+        document.getElementById('pattern-result').textContent = processed;
+    } catch (err) {
+        document.getElementById('pattern-result').textContent = "Error fetching data";
+    }
+});
+</script>
 {% endblock %}
