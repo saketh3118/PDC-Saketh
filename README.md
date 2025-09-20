@@ -68,13 +68,11 @@ PDC-Saketh/
 │
 ├── templates/        # HTML templates
 │   ├── base.html
-│   └── dashboard.html
+│   ├── dashboard.html
+│   └── login.html
 │
-└── static/           # Static files (CSS, JS, Images)
-    ├── css/
-    │   └── style.css
-    └── js/
-        └── script.js
+└── static/           # Static files (CSS)
+      └── style.css
 ```
 
 ## Contributing
