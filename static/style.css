@@ -1,19 +1,17 @@
 body {
     background: #f8f9fa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
 }
 
 .card {
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     padding: 30px;
-    max-width: 400px;
-    width: 100%;
+    max-width: 100%;
     text-align: center;
+    overflow-x: auto;
 }
 
 .profile-pic {
@@ -29,19 +27,32 @@ body {
     color: white;
     width: 100%;
 }
-
 .btn-google:hover {
     background-color: #357ae8;
     color: white;
 }
-
 .btn-logout {
     background-color: #f44336;
     color: white;
     width: 100%;
 }
-
 .btn-logout:hover {
     background-color: #da190b;
     color: white;
+}
+
+pre {
+    white-space: pre;
+    font-family: monospace;
+    line-height: 1.2em;
+    margin: 0;
+}
+
+#pattern-container {
+    display: inline-block;
+    overflow-x: auto;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    white-space: nowrap;
 }
